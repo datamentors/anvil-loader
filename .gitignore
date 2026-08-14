@@ -5,6 +5,8 @@ data/*
 !.env.config
 
 .android/*
+__pycache__/
+*.py[cod]
 
 # Per-box robot description — content differs per workcell, never shared via git.
 # entrypoint_pico4teleop.sh symlinks this in from a per-box-provided real file at
@@ -12,3 +14,7 @@ data/*
 config/robot_description_pico4.urdf
 config/robot_description.urdf
 config/generated_controllers.yaml
+
+# Per-workcell two-PC DDS settings and generated runtime profile.
+deploy/two-pc-unicast/unicast.env
+deploy/two-pc-unicast/runtime/
