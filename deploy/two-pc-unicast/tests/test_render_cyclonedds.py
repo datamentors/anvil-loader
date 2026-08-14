@@ -16,8 +16,8 @@ class RenderCycloneDdsTest(unittest.TestCase):
     def build(self, **overrides):
         values = {
             "interface": "eno1",
-            "robot_ip": "192.168.1.37",
-            "gpu_ip": "192.168.1.17",
+            "robot_ip": "192.0.2.10",
+            "gpu_ip": "192.0.2.20",
             "max_auto_participant_index": 31,
             "max_message_size": "1400B",
             "fragment_size": "1344B",
@@ -38,7 +38,7 @@ class RenderCycloneDdsTest(unittest.TestCase):
         peers = {
             node.attrib["address"] for node in root.findall(".//c:Peer", namespace)
         }
-        self.assertEqual(peers, {"192.168.1.37", "192.168.1.17"})
+        self.assertEqual(peers, {"192.0.2.10", "192.0.2.20"})
 
     def test_profile_write_is_read_only_mount_compatible_and_parseable(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -51,7 +51,7 @@ class RenderCycloneDdsTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unicast"):
             self.build(gpu_ip="239.255.0.1")
         with self.assertRaisesRegex(ValueError, "must be different"):
-            self.build(gpu_ip="192.168.1.37")
+            self.build(gpu_ip="192.0.2.10")
 
     def test_rejects_too_small_participant_ceiling(self):
         with self.assertRaisesRegex(ValueError, "between 24 and 120"):

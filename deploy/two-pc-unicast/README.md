@@ -6,9 +6,8 @@ default loader stack, disables teleoperation, and selects the real-hardware
 inference controller profile.
 
 The profile also sets a finite CycloneDDS auto-participant ceiling above the
-0.10.5 default. The default ceiling was exhausted by the loader's multi-process
-ROS graph; the included stress test validates 24 simultaneous participants
-without loading robot hardware.
+0.10.5 default. The default ceiling is insufficient for the loader's
+multi-process ROS graph.
 
 ## Configure
 
@@ -20,9 +19,10 @@ cp unicast.env.example unicast.env
 $EDITOR unicast.env
 ```
 
-The example documents the tested workcell values, but `unicast.env` is ignored
-by Git because addresses are robot-local configuration. Confirm DHCP
-reservations or static assignments before relying on the peer addresses.
+The example documents the required keys with explicit placeholders.
+`unicast.env` is ignored by Git because interface names and addresses are
+robot-local configuration. Confirm DHCP reservations or static assignments
+before relying on the peer addresses.
 
 The matching inference workstation must use the same ROS domain, multicast
 setting and participant ceiling, with its own interface and the robot address
@@ -40,13 +40,6 @@ It renders `runtime/cyclonedds_two_pc_robot.xml`, verifies the selected NIC and
 peer route, resolves the complete Compose stack, preserves a local
 `docker-compose.override.yml` when present, and checks that no teleoperation
 profile or process is active. It does not start a container or access CAN.
-
-The optional participant stress test uses ROS domain 230, mounts no robot
-configuration or device, and refuses to run while the real ROS stack is active:
-
-```bash
-./test_dds_participants.sh
-```
 
 ## Start real hardware
 
