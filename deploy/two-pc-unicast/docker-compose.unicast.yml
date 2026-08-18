@@ -1,0 +1,26 @@
+services:
+  ros2:
+    # Real arms must never auto-home after a crash, daemon restart or reboot.
+    restart: "no"
+    environment:
+      ROS_DOMAIN_ID: "${ANVIL_ROS_DOMAIN_ID:?set ANVIL_ROS_DOMAIN_ID}"
+      # Bypass the image entrypoint's generated CycloneDDS profile. Its
+      # CycloneDDS 0.10.5 profile omits MaxAutoParticipantIndex and exhausts
+      # the default participant ceiling during a complete loader startup.
+      ENABLE_CYCLONEDDS: "false"
+      RMW_IMPLEMENTATION: "rmw_cyclonedds_cpp"
+      CYCLONEDDS_URI: "file:///tmp/cyclonedds_two_pc_robot.xml"
+      CYCLONEDDS_IFACE: "${ANVIL_ROBOT_INTERFACE:?set ANVIL_ROBOT_INTERFACE}"
+      CYCLONEDDS_PEER_IP: "${ANVIL_GPU_IP:?set ANVIL_GPU_IP}"
+      CYCLONEDDS_ALLOW_MULTICAST: "false"
+      ROS_AUTOMATIC_DISCOVERY_RANGE: "SYSTEM_DEFAULT"
+      CYCLONEDDS_MAX_MESSAGE_SIZE: "${ANVIL_DDS_MAX_MESSAGE_SIZE:-1400B}"
+      CYCLONEDDS_FRAGMENT_SIZE: "${ANVIL_DDS_FRAGMENT_SIZE:-1344B}"
+      CYCLONEDDS_WHC_HIGH: "${ANVIL_DDS_WHC_HIGH:-8MB}"
+      ARMS_CONTROL_CONFIG_FILE: "${ANVIL_ARMS_CONTROL_CONFIG_FILE:-openarm_inference.yaml}"
+      ENABLE_VR_TELEOP: "false"
+    volumes:
+      - type: bind
+        source: "${ANVIL_DDS_PROFILE_PATH:?set ANVIL_DDS_PROFILE_PATH}"
+        target: /tmp/cyclonedds_two_pc_robot.xml
+        read_only: true
