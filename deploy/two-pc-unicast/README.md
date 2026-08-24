@@ -68,6 +68,33 @@ To stop the hardware-facing ROS service while leaving telemetry services alone:
 
 For unexpected motion, use the physical E-stop first.
 
+## Return to Pico4 teleoperation and data capture
+
+The unicast inference profile deliberately excludes Pico4 services. Before
+returning the workcell to teleoperation, stop the inference deployment on the
+inference workstation and confirm that it no longer publishes arm commands.
+
+Switch the Devbox back to the standard Pico4 profile with an operator beside
+the robot, a tested E-stop and a clear workspace. Starting the `ros2` service
+connects to the real arms and may perform automatic homing.
+
+```bash
+cd /home/anvil/anvil-loader/deploy/two-pc-unicast
+./stop.sh
+
+cd /home/anvil/anvil-loader
+docker compose --profile pico4 up --detach
+docker compose --profile pico4 ps
+```
+
+Verify that `ros2`, `pico4-teleop`, `xr-pc-service` and `session-bridge` are
+running before starting a recording session. The workcell UI remains available
+at `http://localhost:3000` from the Devbox.
+
+Do not use `start.sh` from this directory for data capture: it starts the
+inference controller profile and intentionally leaves Pico4 teleoperation
+disabled.
+
 ## Network boundary
 
 Multicast-off static peers prevent accidental discovery across a large LAN, but
